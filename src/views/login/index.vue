@@ -33,6 +33,8 @@
 <script>
 
    import { loginAPI } from '../../api'
+   import { mapMutations } from 'vuex'
+
   
    export default {
     name: 'my-login',
@@ -57,6 +59,7 @@
        }
      },
      methods: {
+    ...mapMutations(['updateToken']), //updateToken在store/index.js中，映像调用
     // 登录按钮->点击事件
     async loginFn () {
       this.$refs.loginRef.validate(async valid => {
@@ -69,6 +72,8 @@
         if (res.code !== 0) return this.$message.error(res.message)
         // 3. 登录成功
         this.$message.success(res.message)
+        // 4.提交给mutations把token字符串保存到vuex中，映像调用
+        this.updateToken(res.token)
       })
     }
   }
