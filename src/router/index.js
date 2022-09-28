@@ -1,3 +1,4 @@
+import store from '@/store'
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 
@@ -6,8 +7,8 @@ Vue.use(VueRouter)
 // 配置路由表
 const routes = [
   {
-   path: '/',
-   redirect: '/login'
+    path: '/',
+    component: () => import('@/views/layout')
   },
   {
     path: '/reg',
@@ -24,6 +25,20 @@ const routes = [
 
 const router = new VueRouter({
   routes
+})
+
+//全局布置守卫
+//在全局前置守卫, 做判断, 有token但是无userInfo信息, 才发请求拿用户信息
+router.beforeEach((to, from, next) => {
+  const token = store.state.token
+  if (token && !store.state.userInfo.username) {
+    // 有token但是没有用户信息, 才去请求用户信息保存到vuex里
+    // 调用actions里方法请求数据
+    store.dispatch('initUserInfo')
+    // initUserInfo 在store文件中
+    // 下次切换页面vuex里有用户信息数据就不会重复请求用户信息
+  }
+  next() // 路由放行
 })
 
 export default router

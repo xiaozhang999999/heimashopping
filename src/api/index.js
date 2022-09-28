@@ -50,3 +50,23 @@ export const registerAPI = ({ username, password, repassword }) => {
     }
   })
 }
+
+
+/**
+ * 获取-用户信息
+ * @returns Promise 对象
+ */
+// getUserInfoAPI，定义接口方法, 用于请求用户信息数据
+export const getUserInfoAPI = () => {
+  return request({
+    url: '/my/userinfo',  
+    // GET/my/userinfo 是接口文档中获取用户基本资料的请求调式方式
+    // method不写默认就是‘get’方式请求
+    // 传参给后台;params(查询字符串query) data(请求体body) header(请求头)
+    headers: {
+      // Authorization 是接口地址里面的请求参数名
+      // this.$store.state.token  这里的this不是组件对象不能用this.$store拿到store对象
+      Authorization: store.state.token
+    }
+  })
+}

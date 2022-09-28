@@ -71,7 +71,9 @@
         // 直接用后台返回的提示message值
         if (res.code !== 0) return this.$message.error(res.message)
         // 3. 登录成功
-        this.$message.success(res.message)
+        // this.$message.success(res.message)
+        // 3,登录成功之后，跳转到后台主页
+        this.$router.push('/')
         // 4.提交给mutations把token字符串保存到vuex中，映像调用
         this.updateToken(res.token)
       })
