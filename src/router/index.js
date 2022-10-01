@@ -41,4 +41,5 @@ router.beforeEach((to, from, next) => {
   next() // 路由放行
 })
 
+
 export default router

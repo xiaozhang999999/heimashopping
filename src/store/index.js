@@ -14,31 +14,44 @@ export default new Vuex.Store({
     userInfo: {} // 定义用户信息对象state
   },
   getters: {
+    nickname: state => state.userInfo.nickname, // 昵称
+    username: state => state.userInfo.username, // 用户名
+    user_pic: state => state.userInfo.user_pic // 用户头像
   },
   mutations: {
     // 保存token 更新 token 的 mutation 函数  在views/login/index.vue的methods中
-    updateToken (state, newToken) {
+    updateToken(state, newToken) {
       state.token = newToken
     },
     // 更新用户的信息   updateUserInfo与下面actions的 updateUserInfo一致
     // userInfo是接口文档中获取用户基本信息的get/my/userinfo
-    updateUserInfo (state, info) {
+    updateUserInfo(state, info) {
       state.userInfo = info
     }
   },
+  // actions: {
+  //   // 定义初始化用户基本信息的 action 函数
+  //   // getUserInfoAPI封装的axios函数在api文件中
+  //   // initUserInfo 在router文件中
+  //   async getUserInfoActions (store) {
+  //     const res = await getUserInfoAPI()
+  //     console.log(res)
+  //     store.commit('updateUserInfo', res.data.data)
+  //     }
+  // },
   actions: {
     // 定义初始化用户基本信息的 action 函数
-    // getUserInfoAPI封装的axios函数在api文件中
-    // initUserInfo 在router文件中
-    async getUserInfoActions (store) {
-      const res = await getUserInfoAPI()
-      console.log(res)
-      store.commit('updateUserInfo', res.data.data)
+    async initUserInfo(store) {
+      const { data: res } = await getUserInfoAPI()
+      if (res.code === 0) {
+        store.commit('updateUserInfo', res.data)
       }
+    }
   },
   // 配置为 vuex 的插件
-  plugins: [createPersistedState() ],
-  modules: {}
+  plugins: [createPersistedState()],
+  // modules: {}
 })
+
 
 // 接口方法+actions获取用户的基本信息

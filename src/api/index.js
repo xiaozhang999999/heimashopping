@@ -2,6 +2,7 @@
 // 封装的是具体的接口请求方法
 // 注意：每个方法只负责请求一个url地址
 import request from '@/utils/request'
+import store from '../store'
 // 形参obj的值 obj = { username:'', password: '', repassword: '' }
 // 左侧（解构的目标）想要对象解构赋值（下面是语法），右边（解构的源）
 // { username:username变量名, password: 变量名, repassword: 变量名 } = { username:'', password: '', repassword: '' }
@@ -51,7 +52,6 @@ export const registerAPI = ({ username, password, repassword }) => {
   })
 }
 
-
 /**
  * 获取-用户信息
  * @returns Promise 对象
@@ -66,6 +66,19 @@ export const getUserInfoAPI = () => {
     headers: {
       // Authorization 是接口地址里面的请求参数名
       // this.$store.state.token  这里的this不是组件对象不能用this.$store拿到store对象
+      Authorization: store.state.token
+    }
+  })
+}
+
+/**
+ * 获取-侧边栏菜单数据
+ * @returns Promise对象
+ */
+ export const getMenusAPI = () => {
+  return request({
+    url: '/my/menus',
+    headers: {
       Authorization: store.state.token
     }
   })
