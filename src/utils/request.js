@@ -1,6 +1,6 @@
 /* 基于axios封装，网络请求的函数 */
 import axios from 'axios'
-import store from '../store'
+import store from '@/store'
 // 创建一个自定的axios方法(比原axios多了个基地址)
 // 比如：http://big-event-vue-api-t.itheima.net/api/reg，去掉后面的/api/reg就是基地址
 // axios函数请求的url地址前面会被拼接基地址, 然后axios请求baseURL+url后台完整地址
