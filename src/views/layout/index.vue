@@ -36,13 +36,6 @@
     <el-container>
       <!-- 侧边栏区域 -->
       <!-- 左侧边栏的用户信息 -->
-      <!-- <el-aside width="200px">
-        <div class="user-box">
-          <img :src="user_pic" alt="" v-if="user_pic" />
-          <img src="../../assets/images/logo.png" alt="" v-else />
-          <span>欢迎 {{ nickname || username }}</span>
-        </div>
-      </el-aside> -->
       <el-aside width="200px">
         <div class="user-box">
           <img :src="user_pic" alt="" v-if="user_pic" />
@@ -51,7 +44,7 @@
         </div>
         <!-- 左侧导航菜单 -->
         <el-menu
-          default-active="/home"
+          default-active="$route.path"
           class="el-menu-vertical-demo"
           background-color="#23262E"
           text-color="#fff"
@@ -90,7 +83,10 @@
 
       <el-container>
         <!-- 页面主体区域 -->
-        <el-main> Main.vue后台主页 </el-main>
+       <!-- 二级路由挂载点 -->
+      <el-main>
+          <router-view></router-view>
+      </el-main>
         <!-- 底部 footer 区域 -->
         <el-footer>© www.itheima.com - 黑马程序员</el-footer>
       </el-container>
@@ -108,15 +104,27 @@ import { getMenusAPI } from "@/api";
 // 解决：@事件名 .native='methods里方法名'
 //. native给组件内根标签，绑定这个原生的事件
 export default {
+  // 组件名称
   name: "my-layout",
-  computed: {
-    ...mapGetters(["nickname", "username", "user_pic"]),
-  },
+  // 数据初始
   data() {
     return {
       menus: [], //侧边栏数据
     };
   },
+  // 初始化，获取数据集，注：created()函数是个单独的钩子函数
+  created() {
+    // console.log("来了1111");
+    //调用 获取侧边栏菜单数据 方法
+    this.getMenusListFn();
+  },
+  // 钩子函数，操作dom节点
+  mounted: {},
+  // 计算属性，映射vuex仓库中的属性
+  computed: {
+    ...mapGetters(["nickname", "username", "user_pic"]),
+  },
+  // 事件方法
   methods: {
     // 退出登录——>点击事件(logoutFn)
     logoutFn() {
@@ -141,9 +149,6 @@ export default {
       console.log(res);
       this.menus = res.data;
     },
-  },
-  created() {
-    this.getMenusListFn();
   },
 };
 </script>
@@ -205,6 +210,7 @@ export default {
   }
 }
 
+// 侧边栏菜单的样式
 // 侧边栏菜单的样式
 .el-aside {
   .el-submenu,

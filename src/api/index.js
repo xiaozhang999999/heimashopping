@@ -2,7 +2,7 @@
 // 封装的是具体的接口请求方法
 // 注意：每个方法只负责请求一个url地址
 import request from '@/utils/request'
-import store from '../store'
+import store from '@/store'
 // 形参obj的值 obj = { username:'', password: '', repassword: '' }
 // 左侧（解构的目标）想要对象解构赋值（下面是语法），右边（解构的源）
 // { username:username变量名, password: 变量名, repassword: 变量名 } = { username:'', password: '', repassword: '' }
@@ -80,6 +80,42 @@ export const getUserInfoAPI = () => {
     url: '/my/menus',
     headers: {
       Authorization: store.state.token
+    }
+  })
+}
+
+/**
+ * 更新-用户基本资料
+ * @param {*} param0 { id: 用户id, email: 用户邮箱, nickname: 用户昵称, user_pic: 用户头像地址, username: 用户名 }
+ * @returns Promise对象
+ */
+ export const updateUserInfoAPI = ({ id, email, nickname, user_pic, username }) => {
+  return request({
+    url: '/my/userinfo',
+    method: 'PUT',
+    data: {
+      id,
+      email,
+      nickname,
+      user_pic,
+      username
+    }
+  })
+}
+
+/**
+ * 获取文章列表
+ * @param {*} param0 { pagenum: 当前页码数, pagesize: 当前页条数, cate_id: 文章分类id, state: 文章状态 }
+ * @returns Promise对象
+ */
+ export const getArticleListAPI = ({ pagenum, pagesize, cate_id, state }) => {
+  return request({
+    url: '/my/article/list',
+    params: {
+      pagenum,
+      pagesize,
+      cate_id,
+      state
     }
   })
 }
