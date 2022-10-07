@@ -3,9 +3,9 @@
     <el-card class="box-card">
       <div slot="header" class="clearfix header-box">
         <span>文章分类</span>
-        <el-button type="primary" size="mini" @click="addVisible = true"
-          >添加分类</el-button
-        >
+        <!-- <el-button type="primary" size="mini" @click="addVisible = true"
+          >添加分类</el-button> -->
+        <el-button type="primary" size="mini" @click="addCateBtnFn">添加分类</el-button>
       </div>
       <!-- 数据表格 -->
       <el-table style="width: 100%" :data="cateList" border stripe>
@@ -16,10 +16,13 @@
         ></el-table-column>
         <el-table-column label="分类名称" prop="cate_name"></el-table-column>
         <el-table-column label="分类别名" prop="cate_alias"></el-table-column>
-        <el-table-column label="操作">
-          <el-button type="primary" size="mini">修改</el-button>
-          <el-button type="danger" size="mini">删除</el-button>
-        </el-table-column>
+       <el-table-column label="操作">
+          <template v-slot="scope">
+              <el-button type="primary" size="mini" @click="updateFn(scope.row)">修改</el-button>
+              <!-- <el-button type="danger" size="mini">删除</el-button> -->
+              <el-button type="danger" size="mini" @click="removeFn(scope.row.id)">删除</el-button>
+          </template>
+       </el-table-column>
       </el-table>
     </el-card>
 
@@ -34,9 +37,8 @@
 
     before-close  对话框关闭前的回调  可以在内部用done（）关闭对话框  
     什么都不调用就会阻止对话框关闭，本应用中没有用到，去掉了
-    
-     -->
-    <el-dialog title="添加文章分类" :visible.sync="addVisible" width="35%" @closed="onAddClosedFn">
+    -->
+    <el-dialog :title="isEdit ? '修改文章分类' : '添加文章分类'" :visible.sync="addVisible" width="35%" @closed="onAddClosedFn">
       <!-- 添加的表单 -->
       <el-form
         :model="addForm"
@@ -69,8 +71,11 @@
 
 <script>
 
+// import { getArticleListAPI } from "@/api"
 import { getArtCateListAPI } from "@/api"
 import { addArtCateAPI } from "@/api"
+import { delArtCateAPI } from "@/api"
+import { updateArtCateAPI } from "@/api"
 
 export default {
   name: "ArtCate",
@@ -92,7 +97,9 @@ export default {
           { required: true, message: '请输入分类别名', trigger: 'blur' },
           { pattern: /^[a-zA-Z0-9]{1,15}$/, message: '分类别名必须是1-15位的字母数字', trigger: 'blur' }
         ]
-    }
+    },
+    editId: '', // 要修改的文章id
+    isEdit: false // 保存编辑状态(false新增, true编辑)
     }
   },
   created() {
@@ -132,9 +139,64 @@ export default {
             return false
         }
     })
+   },
+    // 修改-按钮点击事件
+     updateFn (obj) {
+        this.editId = obj.id // 保存要编辑的文章分类ID
+        this.isEdit = true // 设置编辑状态
+        this.addVisible = true // 让对话框显示
+        // 设置数据回显
+        this.$nextTick(() => {
+           // 先让对话框出现, 它绑定空值的对象, 才能resetFields清空用初始空值
+           this.addForm.cate_name = obj.cate_name
+           this.addForm.cate_alias = obj.cate_alias
+        })
+     },
+     // 添加分类->点击出对话框
+    addCateBtnFn () {
+        this.addVisible = true // 让对话框出现
+        this.editId = '' // 编辑的文章分类id设置无
+        this.isEdit = false // 编辑的状态关闭
+      },
+      // 对话框内-添加按钮-点击事件
+    async addFn () {
+      // 表单预校验
+      this.$refs.addRef.validate(async valid => {
+        if (valid) {
+          // 判断当前是新增还是编辑
+          if (this.isEdit) {
+            // 编辑状态
+            // 调用接口传递数据给后台
+            const { data: res } = await updateArtCateAPI({ id: this.editId, ...this.addForm })
+            if (res.code !== 0) return this.$message.error('更新分类失败！')
+            this.$message.success('更新分类成功！')
+          } else {
+            // 新增
+            // 调用接口传递数据给后台
+            const { data: res } = await addArtCateAPI(this.addForm)
+            if (res.code !== 0) return this.$message.error('添加分类失败！')
+            this.$message.success('添加分类成功！')
+          }
+
+          // 重新请求列表数据
+          this.initCateListFn()
+          // 关闭对话框
+          this.addVisible = false
+        } else {
+          return false
+        }
+      })
+    },
+      // 删除-文章分类
+    async removeFn (id) {
+       const { data: res } = await delArtCateAPI(id)
+       if (res.code !== 0) return this.$message.error('删除分类失败！')
+       this.$message.success('删除分类成功！')
+       // 重新请求列表数据
+       this.initCateListFn()
+}
   }
-  },
-};
+}
 </script>
 
 <style lang="less" scoped>

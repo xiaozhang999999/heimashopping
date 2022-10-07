@@ -119,7 +119,7 @@ export default {
     this.getMenusListFn();
   },
   // 钩子函数，操作dom节点
-  mounted: {},
+  // mounted: {},
   // 计算属性，映射vuex仓库中的属性
   computed: {
     ...mapGetters(["nickname", "username", "user_pic"]),
