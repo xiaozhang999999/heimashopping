@@ -6,10 +6,7 @@ Vue.use(VueRouter)
 
 // 配置路由表
 const routes = [
-  // {
-  //   path: '/',
-  //   component: () => import('@/views/layout')
-  // },
+
   {
     path: '/reg',
     component: () => import('@/views/register')
@@ -37,7 +34,12 @@ const routes = [
       {
         path: 'art-cate', // 文章分类
         component: () => import('@/views/article/artCate')
-    }]
+      },
+      {
+        path: 'art-list', // 文章列表
+        component: () => import('@/views/article/artList')
+    }
+  ]
   },
 ]
 
